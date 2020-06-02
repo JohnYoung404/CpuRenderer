@@ -33,3 +33,5 @@
 
 CpuRenderer/bin
 CpuRenderer/build
+CpuRenderer/xcode_build
+*.DS_Store

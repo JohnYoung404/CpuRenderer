@@ -1,5 +1,5 @@
 # CPURenderer
-A CPU Renderer implemented in C++.
+A Cpu Renderer implemented in C++.
 
 ## Install
 

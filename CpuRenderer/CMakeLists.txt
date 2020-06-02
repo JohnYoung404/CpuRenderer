@@ -15,7 +15,8 @@ add_subdirectory(${GLFW_PATH})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(${PROJECT_NAME}  ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+add_executable(${PROJECT_NAME}  ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+								${CMAKE_CURRENT_SOURCE_DIR}/include/test.h)
 target_link_libraries(${PROJECT_NAME} glew_s)
 target_link_libraries(${PROJECT_NAME} glfw)
 

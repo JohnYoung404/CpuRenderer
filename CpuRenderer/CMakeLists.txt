@@ -19,5 +19,9 @@ add_executable(${PROJECT_NAME}  ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 target_link_libraries(${PROJECT_NAME} glew_s)
 target_link_libraries(${PROJECT_NAME} glfw)
 
+if(WIN32)
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+endif()
+
 install (TARGETS ${PROJECT_NAME} DESTINATION ${INSTALL_DIR})
 install (DIRECTORY ${RES_DIR}  DESTINATION ${INSTALL_DIR})

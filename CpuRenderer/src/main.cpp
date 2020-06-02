@@ -9,7 +9,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "My OpenGL Window", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "CPU Renderer", NULL, NULL);
 	if (window == NULL)
 	{
 		glfwTerminate();
@@ -19,6 +19,8 @@ int main()
 	glViewport(0, 0, 800, 600);
 	while (!glfwWindowShouldClose(window))
 	{
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

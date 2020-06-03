@@ -31,11 +31,17 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+add_library(renderer STATIC ${CMAKE_CURRENT_SOURCE_DIR}/include/renderer.h 
+							${CMAKE_CURRENT_SOURCE_DIR}/src/renderer.cpp)
+
 add_executable(${PROJECT_NAME}  ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-								${CMAKE_CURRENT_SOURCE_DIR}/include/test.h)
+								${CMAKE_CURRENT_SOURCE_DIR}/src/renderer.cpp
+								${CMAKE_CURRENT_SOURCE_DIR}/include/renderer.h)
+								
 target_link_libraries(${PROJECT_NAME} glew_s)
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} renderer)
 
 if(WIN32)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)

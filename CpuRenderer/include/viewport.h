@@ -1,4 +1,6 @@
 #pragma once
+#include <SDL.h>
+#include <string>
 
 namespace CPURenderer
 {
@@ -9,25 +11,16 @@ namespace CPURenderer
 
 		ViewPort(int aWidth, int aHeight) : width(aWidth), height(aHeight)
 		{
-			frame_buffer = new unsigned char[width * height * 3];
-			for (int i = 0; i < width; ++i)
-			{
-				for (int j = 0; j < height; ++j)
-				{
-					SetPixel(i, j, 255, 255, 0);
-				}
-			}
-		}
-		~ViewPort()
-		{
-			delete[] frame_buffer;
+			frame_buffer = new unsigned char[width * height * 4];
+			memset(frame_buffer, 255, width * height * 4 * sizeof(unsigned char));
 		}
 
 		void SetPixel(int posX, int posY, unsigned char r, unsigned char g, unsigned char b)
 		{
-			frame_buffer[(posX * height + posY) * 3 + 0] = r;
-			frame_buffer[(posX * height + posY) * 3 + 1] = g;
-			frame_buffer[(posX * height + posY) * 3 + 2] = b;
+			frame_buffer[(posY * width + posX) * 4 + 0] = r;
+			frame_buffer[(posY * width + posX) * 4 + 1] = g;
+			frame_buffer[(posY * width + posX) * 4 + 2] = b;
+			frame_buffer[(posY * width + posX) * 4 + 3] = 255;
 		}
 	};
 }

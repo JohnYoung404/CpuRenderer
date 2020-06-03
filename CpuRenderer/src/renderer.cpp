@@ -2,7 +2,7 @@
 
 void CPURenderer::Renderer::render_loop()
 {
-	if (_frame_count % 2 < 1)
+	if (_frame_count % 480 < 240)
 	{
 		for (int i = 0; i < gViewPort.width; ++i)
 		{
@@ -22,6 +22,5 @@ void CPURenderer::Renderer::render_loop()
 			}
 		}
 	}
-
 	++_frame_count;
 }

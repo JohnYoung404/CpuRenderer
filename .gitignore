@@ -31,7 +31,9 @@
 *.out
 *.app
 
+.vs/
 CpuRenderer/bin
 CpuRenderer/build
+CpuRenderer/out
 CpuRenderer/xcode_build
 *.DS_Store

@@ -1,6 +1,9 @@
 #include "renderer.h"
+#include <iostream>
 
-namespace CPURenderer
+void CPURenderer::ViewPort::DoNothing()
 {
-	ViewPort viewPort(800, 600);
+	std::cout << "DoNothing";
 }
+
+CPURenderer::ViewPort gViewPort(800, 600);

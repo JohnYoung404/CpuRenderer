@@ -1,7 +1,8 @@
 #include <SDL.h>
 #include "renderer.h"
-
 #include <cstdlib>
+
+using CPURenderer::ViewPort;
 
 int main(int argc, char *argv[]) {
 	SDL_Event event;
@@ -10,10 +11,10 @@ int main(int argc, char *argv[]) {
 	SDL_Texture* texture;
 
 	SDL_Init(SDL_INIT_VIDEO);
-	window = SDL_CreateWindow("CPU Renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gViewPort.width, gViewPort.height, 0);
+	window = SDL_CreateWindow("CPU Renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, ViewPort::instance.width, ViewPort::instance.height, 0);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	texture = SDL_CreateTexture(renderer,
-		SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, gViewPort.width, gViewPort.height);
+		SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, ViewPort::instance.width, ViewPort::instance.height);
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
 			break;
 
 		r.render_loop();
-		SDL_UpdateTexture(texture, NULL, gViewPort.frame_buffer, gViewPort.width * 4 * sizeof(unsigned char));
+		SDL_UpdateTexture(texture, NULL, ViewPort::instance.frame_buffer, ViewPort::instance.width * 4 * sizeof(unsigned char));
 		SDL_RenderCopy(renderer, texture, NULL, NULL);
 		SDL_RenderPresent(renderer);
 	}

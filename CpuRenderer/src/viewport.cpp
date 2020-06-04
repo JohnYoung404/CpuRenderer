@@ -1,3 +1,3 @@
 #include "viewport.h"
 
-CPURenderer::ViewPort gViewPort(800, 600);
+CPURenderer::ViewPort CPURenderer::ViewPort::instance(800, 600);

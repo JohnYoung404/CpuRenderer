@@ -2,6 +2,7 @@
 #include <vector>
 #include "renderer.h"
 #include "math_util.h"
+#include "matrix4.h"
 
 void CPURenderer::Renderer::render_clear() const
 {
@@ -51,6 +52,15 @@ void CPURenderer::Renderer::render_loop()
 
 		if (i != 0) draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[0].pos.x , clipped[0].pos.y }, Color::yellow);
 	}
+	//////////////////////////////////////////////////////////////////////////
+	// math test.
+	auto &refZero = Matrix4::zero;
+	auto &refIdentity = Matrix4::identity;
+	auto diff = refZero - refIdentity;
+	auto a = (3 * diff * -1) * Matrix4::identity;
+	Vector4 b = Vector4{ 2.0f, 3.0f, 1.0f, 3.2f };
+	Vector4 c = Matrix4::identity * b;
+	//////////////////////////////////////////////////////////////////////////
 	++_frame_count;
 }
 

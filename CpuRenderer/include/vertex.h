@@ -5,6 +5,7 @@ namespace CPURenderer
 {
 	class Vertex
 	{
+	public:
 		Vector3 pos;
 	};
 }

@@ -10,7 +10,7 @@ namespace CPURenderer
 
 		Vector3 operator+(const Vector3& rhs) const { return Vector3{x + rhs.x, y + rhs.y, z + rhs.z}; }
 		Vector3 operator-(const Vector3& rhs) const { return Vector3{ x - rhs.x, y - rhs.y, z - rhs.z }; }
-		
+
 		Vector3& add(const Vector3& rhs);
 		Vector3& sub(const Vector3& rhs);
 		Vector3& div(const Vector3& rhs);
@@ -27,6 +27,17 @@ namespace CPURenderer
 	inline float dot(const Vector3& lhs, const Vector3& rhs)
 	{ 
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z; 
+	}
+
+
+	inline Vector3 operator*(const Vector3 vec, float scalar)
+	{ 
+		return Vector3{ vec.x * scalar, vec.y * scalar, vec.z * scalar };
+	}
+
+	inline Vector3 operator*(float scalar, const Vector3 vec)
+	{
+		return Vector3{ vec.x * scalar, vec.y * scalar, vec.z * scalar };
 	}
 
 	inline Vector3& Vector3::add(const Vector3& rhs)

@@ -56,11 +56,6 @@ void CPURenderer::Renderer::render_loop()
 
 void CPURenderer::Renderer::draw_DDA_line(Point2d p0, Point2d p1, Color c) const
 {
-	p0.x = round(p0.x);
-	p0.y = round(p0.y);
-	p1.x = round(p1.x);
-	p1.y = round(p1.y);
-
 	float dx = p1.x - p0.x;
 	float dy = p1.y - p0.y;
 

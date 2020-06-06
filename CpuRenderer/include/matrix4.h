@@ -85,18 +85,12 @@ namespace CPURenderer
 		return ret;
 	}
 
-	inline Matrix4 Matrix4::inverse() const
-	{
-		return Matrix4();
-	}
-
 	inline Matrix4 Matrix4::transpose() const
 	{
-		return Matrix4();
-	}
-
-	inline float Matrix4::det() const
-	{
-		return 0.0f;
+		Matrix4 ret;
+		for (int i = 0; i < 4; ++i)
+			for (int j = 0; j < 4; ++j)
+				ret.mat[i][j] = mat[j][i];
+		return ret;
 	}
 }

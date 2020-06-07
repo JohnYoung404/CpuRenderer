@@ -33,6 +33,11 @@ namespace CPURenderer
 			u = cross(up, n).normalize();
 			v = cross(n, u);
 
+			CalViewMat();
+		}
+
+		void CalViewMat()
+		{
 			_viewMat.mat[0][0] = u.x;	_viewMat.mat[0][1] = u.y;	_viewMat.mat[0][2] = u.z;	_viewMat.mat[0][3] = -dot(u, eye);
 			_viewMat.mat[1][0] = v.x;	_viewMat.mat[1][1] = v.y;	_viewMat.mat[1][2] = v.z;	_viewMat.mat[1][3] = -dot(v, eye);
 			_viewMat.mat[2][0] = n.x;	_viewMat.mat[2][1] = n.y;	_viewMat.mat[2][2] = n.z;	_viewMat.mat[2][3] = -dot(n, eye);
@@ -65,6 +70,76 @@ namespace CPURenderer
 			_screenMappingMat.mat[0][3] = (viewPort.width - 1) / 2.0f;
 			_screenMappingMat.mat[1][3] = (viewPort.height - 1) / 2.0f;
 			_screenMappingMat.mat[3][3] = 1;
+		}
+
+		void yaw(float angle)
+		{
+			float cs = (float)cos(angle * M_PI / 180);
+			float sn = (float)sin(angle * M_PI / 180);
+
+			Vector3 t = n;
+			Vector3 s = u;
+
+			n = t * cs - s * sn;
+			u = t * sn + s * cs;
+		}
+
+		void pitch(float angle)
+		{
+			float cs = (float)cos(angle * M_PI / 180);
+			float sn = (float)sin(angle * M_PI / 180);
+
+			Vector3 t = v;
+			Vector3 s = n;
+
+			v = t * cs - s * sn;
+			n = t * sn + s * cs;
+		}
+
+		void slide(float du, float dv, float dn)
+		{
+			eye.x += du * u.x + dv * v.x + dn * n.x;
+			eye.y += du * u.y + dv * v.y + dn * n.y;
+			eye.z += du * u.z + dv * v.z + dn * n.z;
+			at.x += du * u.x + dv * v.x + dn * n.x;
+			at.y += du * u.y + dv * v.y + dn * n.y;
+			at.z += du * u.z + dv * v.z + dn * n.z;
+		}
+
+		float getDist()
+		{
+			float dist = (float)(pow(eye.x, 2) + pow(eye.y, 2) + pow(eye.z, 2));
+			return (float)pow(dist, 0.5);
+		}
+
+		void RotateX(float angle)
+		{
+			float d = getDist();
+			int cnt = 100;
+			float theta = angle / cnt;
+			float slide_d = (float)(2 * d * sin(theta * 3.14159265 / 360));
+			yaw(theta / 2);
+			for (; cnt != 0; --cnt)
+			{
+				slide(slide_d, 0, 0);
+				yaw(theta);
+			}
+			yaw(-theta / 2);
+		}
+
+		void RotateY(float angle)
+		{
+			float d = getDist();
+			int cnt = 100;
+			float theta = angle / cnt;
+			float slide_d = (float)(2 * d *sin(theta * 3.14159265 / 360));
+			pitch(theta / 2);
+			for (; cnt != 0; --cnt)
+			{
+				slide(0, -slide_d, 0);
+				pitch(theta);
+			}
+			pitch(-theta / 2);
 		}
 	};
 }

@@ -24,9 +24,46 @@ int main(int argc, char *argv[]) {
 	r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 100.0f);
 	r.mainCamera.ScreenMapping(ViewPort::instance);
 
+	bool mouseDown = false;
+	int lastPosX, lastPosY;
+
 	while (1) {
 		if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
 			break;
+
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+		{
+			lastPosX = event.button.x;
+			lastPosY = event.button.y;
+			mouseDown = true;
+		}
+		else if (event.type == SDL_MOUSEBUTTONUP)
+		{
+			mouseDown = false;
+		}
+		else if (mouseDown && event.type == SDL_MOUSEMOTION)
+		{
+			int dx = event.button.x - lastPosX;
+			int dy = event.button.y - lastPosY;
+
+			r.mainCamera.RotateX(-(float)dx / 5.0f);
+			r.mainCamera.RotateY((float)dy / 5.0f);
+			lastPosX = event.button.x;
+			lastPosY = event.button.y;
+			r.mainCamera.CalViewMat();
+		}
+		else if (event.type == SDL_MOUSEWHEEL)
+		{
+			if (event.wheel.y > 0)
+			{
+				r.mainCamera.slide(0.0f, 0.0f, 0.05f);
+			}
+			else if(event.wheel.y < 0)
+			{
+				r.mainCamera.slide(0.0f, 0.0f, -0.05f);
+			}
+			r.mainCamera.CalViewMat();
+		}
 
 		r.render_loop();
 		SDL_UpdateTexture(texture, NULL, ViewPort::instance.frame_buffer, ViewPort::instance.width * 4 * sizeof(unsigned char));

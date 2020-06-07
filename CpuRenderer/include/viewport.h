@@ -11,6 +11,9 @@ namespace CPURenderer
 		unsigned char* frame_buffer;
 		static ViewPort instance;
 
+		ViewPort(const ViewPort &other) = delete;
+		void operator=(const ViewPort& other) = delete;
+
 		ViewPort(int aWidth, int aHeight) : width(aWidth), height(aHeight)
 		{
 			frame_buffer = new unsigned char[width * height * 4];

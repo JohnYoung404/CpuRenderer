@@ -11,6 +11,20 @@ void CPURenderer::Renderer::render_clear() const
 	memset(ViewPort::instance.frame_buffer, 0, width * height * sizeof(unsigned int));
 }
 
+void drawTri(const CPURenderer::Renderer &r, CPURenderer::Vector4 p0, CPURenderer::Vector4 p1, CPURenderer::Vector4 p2)
+{
+	using namespace CPURenderer;
+	Vector4 t0 = r.mainCamera.ScrMappingMat() * r.mainCamera.ProjMat() * r.mainCamera.ViewMat() * p0;
+	Vector4 t1 = r.mainCamera.ScrMappingMat() * r.mainCamera.ProjMat() * r.mainCamera.ViewMat() * p1;
+	Vector4 t2 = r.mainCamera.ScrMappingMat() * r.mainCamera.ProjMat() * r.mainCamera.ViewMat() * p2;
+
+	Vertex sv0 = { {t0.x / t0.w, t0.y / t0.w, t0.z / t0.w} };
+	Vertex sv1 = { {t1.x / t1.w, t1.y / t1.w, t1.z / t1.w} };
+	Vertex sv2 = { {t2.x / t2.w, t2.y / t2.w, t2.z / t2.w} };
+
+	r.draw_wireframe_triangle(sv0, sv1, sv2, Color::green);
+}
+
 void CPURenderer::Renderer::render_loop()
 {	
 	//if (_frame_count % 480 < 240)
@@ -36,22 +50,24 @@ void CPURenderer::Renderer::render_loop()
 
 	render_clear();
 
-	Vertex x0{ {1000, 200, 0} }, x1{ {-400, 500, 0} }, x2{ {300, -100, 0} };
-	std::vector<Vertex> convex = { x0, x1, x2 };
-	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { 0.0f, (float)ViewPort::instance.width - 1.0f }, { 0.0f, (float)ViewPort::instance.height - 1.0f }, { 0.0f, 0.0f });
-	for (int i = 0; i < (int)clipped.size(); ++i)
-	{
-		if (i <= (int)clipped.size() - 2)
-		{
-			draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[i + 1].pos.x , clipped[i + 1].pos.y }, Color::yellow);
-		}
-		else
-		{
-			draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[0].pos.x , clipped[0].pos.y }, Color::yellow);
-		}
+	//Vertex x0{ {1000, 200, 0} }, x1{ {-400, 500, 0} }, x2{ {300, -100, 0} };
+	//Vertex y0{ {20, 200, 0} }, y1{ {300, 500, 0} }, y2{ {1700, 100, 0} };
+	//draw_wireframe_triangle(x0, x1, x2, Color::yellow);
+	//draw_wireframe_triangle(y0, y1, y2, Color::red);
 
-		if (i != 0) draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[0].pos.x , clipped[0].pos.y }, Color::yellow);
-	}
+	drawTri(*this, { 1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f });
+	drawTri(*this, { -1.0f, -1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f });
+	drawTri(*this, { 1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f });
+	drawTri(*this, { 1.0f, -1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f });
+	drawTri(*this, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f, 1.0f });
+	drawTri(*this, { -1.0f, 1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f });
+	drawTri(*this, { -1.0f, 1.0f, -1.0f, 1.0f }, { -1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f, 1.0f });
+	drawTri(*this, { -1.0f, -1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f, 1.0f });
+	drawTri(*this, { -1.0f, -1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f });
+	drawTri(*this, { -1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f });
+	drawTri(*this, { 1.0f, 1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	drawTri(*this, { -1.0f, 1.0f, 1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	
 	//////////////////////////////////////////////////////////////////////////
 	// math test.
 	Matrix4 m =
@@ -66,7 +82,7 @@ void CPURenderer::Renderer::render_loop()
 	++_frame_count;
 }
 
-void CPURenderer::Renderer::draw_DDA_line(Point2d p0, Point2d p1, Color c) const
+void CPURenderer::Renderer::draw_DDA_line(const Point2d &p0, const Point2d &p1, Color c) const
 {
 	float dx = p1.x - p0.x;
 	float dy = p1.y - p0.y;
@@ -84,6 +100,26 @@ void CPURenderer::Renderer::draw_DDA_line(Point2d p0, Point2d p1, Color c) const
 		ViewPort::instance.SetPixel((int)round(X), (int)round(Y), c);
 		X += Xinc;
 		Y += Yinc;
+	}
+}
+
+void CPURenderer::Renderer::draw_wireframe_triangle(const Vertex & v0, const Vertex & v1, const Vertex & v2, Color c) const
+{
+	std::vector<Vertex> convex = { v0, v1, v2 };
+
+	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { 0.0f, (float)ViewPort::instance.width - 1.0f }, { 0.0f, (float)ViewPort::instance.height - 1.0f }, { -1.0f, 1.0f });
+	for (int i = 0; i < (int)clipped.size(); ++i)
+	{
+		if (i <= (int)clipped.size() - 2)
+		{
+			draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[i + 1].pos.x , clipped[i + 1].pos.y }, c);
+		}
+		else
+		{
+			draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[0].pos.x , clipped[0].pos.y }, c);
+		}
+
+		if (i != 0) draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[0].pos.x , clipped[0].pos.y }, c);
 	}
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include "vector3.h"
+
 namespace CPURenderer
 {
 	struct Vector4
@@ -24,6 +26,7 @@ namespace CPURenderer
 		Matrix4 operator-(const Matrix4 &rhs) const;
 		Matrix4 operator*(const Matrix4 &rhs) const;
 		Vector4 operator*(const Vector4 &vec4) const;
+		Vector3 operator*(const Vector3 &vec3) const;
 		Matrix4 inverse() const;
 		Matrix4 transpose() const;
 		float det() const;
@@ -71,7 +74,7 @@ namespace CPURenderer
 		for (int i = 0; i < 4; ++i)
 			for (int j = 0; j < 4; ++j)
 				for (int k = 0; k < 4; ++k)
-					ret.mat[i][j] += mat[k][j] * rhs.mat[i][k];
+					ret.mat[i][j] += mat[i][k] * rhs.mat[k][j];
 		return ret;
 	}
 
@@ -81,8 +84,15 @@ namespace CPURenderer
 		Vector4 ret = {0, 0, 0, 0};
 		for (int i = 0; i < 4; ++i)
 			for (int j = 0; j < 4; ++j)
-				ret._arr[i] += vec4._arr[j] * mat[j][i];
+				ret._arr[i] += vec4._arr[j] * mat[i][j];
 		return ret;
+	}
+
+	inline Vector3 Matrix4::operator*(const Vector3 &vec3) const
+	{
+		Vector4 extended = { vec3.x, vec3.y, vec3.z, 1.0f };
+		Vector4 product = (*this) * extended;
+		return Vector3{product.x / product.w, product.y / product.w , product.z / product.w };
 	}
 
 	inline Matrix4 Matrix4::transpose() const

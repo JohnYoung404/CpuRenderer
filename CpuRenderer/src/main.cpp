@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
 	SDL_RenderClear(renderer);
 
 	CPURenderer::Renderer r;
+	r.MainCamera.LookAt({ 0.0f, 3.0f, -3.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
+	r.MainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 100.0f);
 
 	while (1) {
 		if (SDL_PollEvent(&event) && event.type == SDL_QUIT)

@@ -3,6 +3,7 @@
 #include "viewport.h"
 #include "point2d.h"
 #include "vertex.h"
+#include "camera.h"
 
 namespace CPURenderer
 {
@@ -11,6 +12,8 @@ namespace CPURenderer
 	private:
 		unsigned int _frame_count;
 	public:
+		Camera MainCamera;
+
 		Renderer() :_frame_count(0) {}
 		~Renderer() {}
 

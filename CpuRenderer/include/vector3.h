@@ -29,7 +29,6 @@ namespace CPURenderer
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z; 
 	}
 
-
 	inline Vector3 operator*(const Vector3 vec, float scalar)
 	{ 
 		return Vector3{ vec.x * scalar, vec.y * scalar, vec.z * scalar };

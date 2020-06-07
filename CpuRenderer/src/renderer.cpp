@@ -54,13 +54,6 @@ void CPURenderer::Renderer::render_loop()
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// math test.
-	auto &refZero = Matrix4::zero;
-	auto &refIdentity = Matrix4::identity;
-	auto diff = refZero - refIdentity;
-	auto a = (3 * diff * -1) * Matrix4::identity;
-	Vector4 b = Vector4{ 2.0f, 3.0f, 1.0f, 3.2f };
-	Vector4 c = Matrix4::identity * b;
-
 	Matrix4 m =
 	{
 		1.0f, 2.0f, 3.0f, 4.0f,
@@ -68,10 +61,6 @@ void CPURenderer::Renderer::render_loop()
 		4.0f, 3.0f, 2.0f, 1.0f,
 		5.0f, 6.0f, 8.0f, 7.0f
 	};
-
-	float detm = m.det();
-
-	Matrix4 d = m.inverse() * 60;
 	Matrix4 e = m.inverse() * m;
 	//////////////////////////////////////////////////////////////////////////
 	++_frame_count;

@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 set(GLEW_PATH thirdparty/glew)
 set(GLFW_PATH thirdparty/glfw)
-
+set(TINY_OBJLOADER_PATH thirdparty/tiny_obj_loader)
 
 set(INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(RES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/res)
@@ -14,9 +14,11 @@ set (CMAKE_INSTALL_PREFIX ${INSTALL_DIR})
 
 include_directories(${GLEW_PATH}/include)
 include_directories(${GLFW_PATH}/include)
+include_directories(${TINY_OBJLOADER_PATH})
 
 add_subdirectory(${GLEW_PATH}/build/cmake)
 add_subdirectory(${GLFW_PATH})
+add_subdirectory(${TINY_OBJLOADER_PATH})
 
 if(WIN32)
 	set(SDL2_PATH thirdparty/SDL2)
@@ -40,6 +42,7 @@ add_executable(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
 								
 target_link_libraries(${PROJECT_NAME} glew_s)
 target_link_libraries(${PROJECT_NAME} glfw)
+target_link_libraries(${PROJECT_NAME} tinyObjLoader)
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 
 if(WIN32)

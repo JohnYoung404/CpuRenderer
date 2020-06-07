@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		r.render_loop();
+
 		SDL_UpdateTexture(texture, NULL, ViewPort::instance.frame_buffer, ViewPort::instance.width * 4 * sizeof(unsigned char));
 		SDL_RenderCopy(renderer, texture, NULL, NULL);
 		SDL_RenderPresent(renderer);

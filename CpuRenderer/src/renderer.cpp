@@ -22,33 +22,33 @@ void drawTri(const CPURenderer::Renderer &r, CPURenderer::Vector4 p0, CPURendere
 	Vertex sv1 = { {t1.x / t1.w, t1.y / t1.w, t1.z / t1.w} };
 	Vertex sv2 = { {t2.x / t2.w, t2.y / t2.w, t2.z / t2.w} };
 
-	r.draw_wireframe_triangle(sv0, sv1, sv2, Color::green);
+	r.draw_wireframe_triangle(sv0, sv1, sv2, Color::black);
 }
 
 void CPURenderer::Renderer::render_loop()
 {	
-	//if (_frame_count % 480 < 240)
-	//{
-	//	for (int i = 0; i < ViewPort::instance.width; ++i)
-	//	{
-	//		for (int j = 0; j < ViewPort::instance.height; ++j)
-	//		{
-	//			ViewPort::instance.SetPixel(i, j, Color::yellow);
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	for (int i = 0; i < ViewPort::instance.width; ++i)
-	//	{
-	//		for (int j = 0; j < ViewPort::instance.height; ++j)
-	//		{
-	//			ViewPort::instance.SetPixel(i, j, Color::sky_blue);
-	//		}
-	//	}
-	//}
+	if (_frame_count % 480 < 240)
+	{
+		for (int i = 0; i < ViewPort::instance.width; ++i)
+		{
+			for (int j = 0; j < ViewPort::instance.height; ++j)
+			{
+				ViewPort::instance.SetPixel(i, j, Color::yellow);
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < ViewPort::instance.width; ++i)
+		{
+			for (int j = 0; j < ViewPort::instance.height; ++j)
+			{
+				ViewPort::instance.SetPixel(i, j, Color::sky_blue);
+			}
+		}
+	}
 
-	render_clear();
+	//render_clear();
 
 	//Vertex x0{ {1000, 200, 0} }, x1{ {-400, 500, 0} }, x2{ {300, -100, 0} };
 	//Vertex y0{ {20, 200, 0} }, y1{ {300, 500, 0} }, y2{ {1700, 100, 0} };

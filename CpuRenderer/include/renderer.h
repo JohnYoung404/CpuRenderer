@@ -4,6 +4,7 @@
 #include "point2d.h"
 #include "vertex.h"
 #include "camera.h"
+#include "mesh.h"
 
 namespace CPURenderer
 {

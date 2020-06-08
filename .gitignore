@@ -5,7 +5,9 @@
 *.slo
 *.lo
 *.o
-*.obj
+
+#be careful we dont want to exclude .obj model file
+CPURenderer/build/*.obj
 
 # Precompiled Headers
 *.gch

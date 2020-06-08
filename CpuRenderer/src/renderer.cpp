@@ -47,8 +47,6 @@ void CPURenderer::Renderer::render_loop()
 			}
 		}
 	}
-	Mesh ms;
-	ms.LoadMesh("res/dragon.obj");
 	//render_clear();
 
 	//Vertex x0{ {1000, 200, 0} }, x1{ {-400, 500, 0} }, x2{ {300, -100, 0} };

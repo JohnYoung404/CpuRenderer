@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include "mesh.h"
 #include "renderer.h"
 #include <cstdlib>
 
@@ -23,6 +24,9 @@ int main(int argc, char *argv[]) {
 	r.mainCamera.LookAt({ 0.0f, 3.0f, -3.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
 	r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 100.0f);
 	r.mainCamera.ScreenMapping(ViewPort::instance);
+
+	CPURenderer::Mesh ms;
+	ms.LoadMesh("res/dragon.obj");
 
 	bool mouseDown = false;
 	int lastPosX, lastPosY;

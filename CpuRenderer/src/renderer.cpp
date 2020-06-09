@@ -54,29 +54,29 @@ void CPURenderer::Renderer::render_loop()
 	//draw_wireframe_triangle(x0, x1, x2, Color::yellow);
 	//draw_wireframe_triangle(y0, y1, y2, Color::red);
 
-	drawTri(*this, { 1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f });
-	drawTri(*this, { -1.0f, -1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f });
-	drawTri(*this, { 1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f });
-	drawTri(*this, { 1.0f, -1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f });
-	drawTri(*this, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f, 1.0f });
-	drawTri(*this, { -1.0f, 1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f });
-	drawTri(*this, { -1.0f, 1.0f, -1.0f, 1.0f }, { -1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f, 1.0f });
-	drawTri(*this, { -1.0f, -1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f, 1.0f });
-	drawTri(*this, { -1.0f, -1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f });
-	drawTri(*this, { -1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f });
-	drawTri(*this, { 1.0f, 1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
-	drawTri(*this, { -1.0f, 1.0f, 1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	//drawTri(*this, { 1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f });
+	//drawTri(*this, { -1.0f, -1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f });
+	//drawTri(*this, { 1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f });
+	//drawTri(*this, { 1.0f, -1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f });
+	//drawTri(*this, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f, 1.0f });
+	//drawTri(*this, { -1.0f, 1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f });
+	//drawTri(*this, { -1.0f, 1.0f, -1.0f, 1.0f }, { -1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f, 1.0f });
+	//drawTri(*this, { -1.0f, -1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f, 1.0f });
+	//drawTri(*this, { -1.0f, -1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, -1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f });
+	//drawTri(*this, { -1.0f, -1.0f, -1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f, 1.0f });
+	//drawTri(*this, { 1.0f, 1.0f, -1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	//drawTri(*this, { -1.0f, 1.0f, 1.0f, 1.0f }, { -1.0f, 1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
 	
 	//////////////////////////////////////////////////////////////////////////
 	// math test.
-	Matrix4 m =
-	{
-		1.0f, 2.0f, 3.0f, 4.0f,
-		5.0f, 8.0f, 7.0f, 6.0f,
-		4.0f, 3.0f, 2.0f, 1.0f,
-		5.0f, 6.0f, 8.0f, 7.0f
-	};
-	Matrix4 e = m.inverse() * m;
+	//Matrix4 m =
+	//{
+	//	1.0f, 2.0f, 3.0f, 4.0f,
+	//	5.0f, 8.0f, 7.0f, 6.0f,
+	//	4.0f, 3.0f, 2.0f, 1.0f,
+	//	5.0f, 6.0f, 8.0f, 7.0f
+	//};
+	//Matrix4 e = m.inverse() * m;
 	//////////////////////////////////////////////////////////////////////////
 	++_frame_count;
 }
@@ -119,6 +119,30 @@ void CPURenderer::Renderer::draw_wireframe_triangle(const Vertex & v0, const Ver
 		}
 
 		if (i != 0) draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[0].pos.x , clipped[0].pos.y }, c);
+	}
+}
+
+void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) const
+{
+	const auto &verts = mesh.mesh[0].mesh.positions;
+	const auto &indices = mesh.mesh[0].mesh.indices;
+	const auto &mvp = mainCamera.ScrMappingMat() * mainCamera.ProjMat() * mainCamera.ViewMat();
+	for (size_t i = 0; i < indices.size(); i += 3)
+	{
+		size_t indice_0 = indices[i], indice_1 = indices[i + 1], indice_2 = indices[i + 2];
+		Vector4 v0 = { verts[indice_0 * 3], verts[indice_0 * 3 + 1], verts[indice_0 * 3 + 2], 1.0f };
+		Vector4 v1 = { verts[indice_1 * 3], verts[indice_1 * 3 + 1], verts[indice_1 * 3 + 2], 1.0f };
+		Vector4 v2 = { verts[indice_2 * 3], verts[indice_2 * 3 + 1], verts[indice_2 * 3 + 2], 1.0f };
+
+		Vector4 t0 = mvp * v0;
+		Vector4 t1 = mvp * v1;
+		Vector4 t2 = mvp * v2;
+
+		Vertex sv0 = { {t0.x / t0.w, t0.y / t0.w, t0.z / t0.w} };
+		Vertex sv1 = { {t1.x / t1.w, t1.y / t1.w, t1.z / t1.w} };
+		Vertex sv2 = { {t2.x / t2.w, t2.y / t2.w, t2.z / t2.w} };
+
+		draw_wireframe_triangle(sv0, sv1, sv2, c);
 	}
 }
 

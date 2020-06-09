@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 	SDL_RenderClear(renderer);
 
 	CPURenderer::Renderer r;
-	r.mainCamera.LookAt({ 0.0f, 3.0f, -3.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
+	r.mainCamera.LookAt({ 0.0f, -5.0f, 2.5f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f });
 	r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 100.0f);
 	r.mainCamera.ScreenMapping(ViewPort::instance);
 
@@ -70,6 +70,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		r.render_loop();
+		r.draw_wireframe_mesh(ms, CPURenderer::Color::black);
 
 		SDL_UpdateTexture(texture, NULL, ViewPort::instance.frame_buffer, ViewPort::instance.width * 4 * sizeof(unsigned char));
 		SDL_RenderCopy(renderer, texture, NULL, NULL);

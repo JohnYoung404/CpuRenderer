@@ -4,6 +4,7 @@
 #include "point2d.h"
 #include "vertex.h"
 #include "camera.h"
+#include "mesh.h"
 
 namespace CPURenderer
 {
@@ -22,6 +23,7 @@ namespace CPURenderer
 
 		void draw_DDA_line(const Point2d &p0, const Point2d &p1, Color c) const;
 		void draw_wireframe_triangle(const Vertex &v0, const Vertex &v1, const Vertex & v2, Color c) const;
+		void draw_wireframe_mesh(const Mesh &mesh, Color c) const;
 		void render_clear() const;	// clear buffer to black.
 
 		void render_loop();

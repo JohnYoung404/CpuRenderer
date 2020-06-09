@@ -24,6 +24,9 @@ int main(int argc, char *argv[]) {
 	r.mainCamera.LookAt({ 0.0f, 200.0f, 1000.0f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, 200.0f, 0.0f });
 	r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 10000.0f);
 	r.mainCamera.ScreenMapping(ViewPort::instance);
+	r.mainCamera.RotateX(45.0f);
+	r.mainCamera.slide(0.0f, 0.0f, 400.f);
+	r.mainCamera.CalViewMat();
 
 	CPURenderer::Mesh ms;
 	ms.LoadMesh("res/cat.obj");
@@ -70,7 +73,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		r.render_loop();
-		r.draw_wireframe_mesh(ms, CPURenderer::Color::black);
+		r.draw_wireframe_mesh(ms, CPURenderer::Color::white);
 
 		SDL_UpdateTexture(texture, NULL, ViewPort::instance.frame_buffer, ViewPort::instance.width * 4 * sizeof(unsigned char));
 		SDL_RenderCopy(renderer, texture, NULL, NULL);

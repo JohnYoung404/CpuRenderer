@@ -47,7 +47,7 @@ void CPURenderer::Renderer::render_loop()
 			}
 		}
 	}
-	//render_clear();
+	render_clear();
 
 	//Vertex x0{ {1000, 200, 0} }, x1{ {-400, 500, 0} }, x2{ {300, -100, 0} };
 	//Vertex y0{ {20, 200, 0} }, y1{ {300, 500, 0} }, y2{ {1700, 100, 0} };
@@ -144,6 +144,11 @@ void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) cons
 
 		draw_wireframe_triangle(sv0, sv1, sv2, c);
 	}
+}
+
+void CPURenderer::Renderer::line_sweep_fill_triangle(const Vertex & v0, const Vertex & v1, const Vertex & v2, Color c) const
+{
+
 }
 
 namespace

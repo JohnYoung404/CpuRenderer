@@ -124,6 +124,7 @@ void CPURenderer::Renderer::draw_wireframe_triangle(const Vertex & v0, const Ver
 
 void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) const
 {
+	if (!mesh.mesh.size())	return;
 	const auto &verts = mesh.mesh[0].mesh.positions;
 	const auto &indices = mesh.mesh[0].mesh.indices;
 	const auto &mvp = mainCamera.ScrMappingMat() * mainCamera.ProjMat() * mainCamera.ViewMat();

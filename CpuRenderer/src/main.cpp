@@ -21,12 +21,12 @@ int main(int argc, char *argv[]) {
 	SDL_RenderClear(renderer);
 
 	CPURenderer::Renderer r;
-	r.mainCamera.LookAt({ 0.0f, -5.0f, 2.5f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f });
-	r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 100.0f);
+	r.mainCamera.LookAt({ 0.0f, 200.0f, 1000.0f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, 200.0f, 0.0f });
+	r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 10000.0f);
 	r.mainCamera.ScreenMapping(ViewPort::instance);
 
 	CPURenderer::Mesh ms;
-	ms.LoadMesh("res/dragon.obj");
+	ms.LoadMesh("res/cat.obj");
 
 	bool mouseDown = false;
 	int lastPosX, lastPosY;
@@ -60,11 +60,11 @@ int main(int argc, char *argv[]) {
 		{
 			if (event.wheel.y > 0)
 			{
-				r.mainCamera.slide(0.0f, 0.0f, 0.05f);
+				r.mainCamera.slide(0.0f, 0.0f, 25.f);
 			}
 			else if(event.wheel.y < 0)
 			{
-				r.mainCamera.slide(0.0f, 0.0f, -0.05f);
+				r.mainCamera.slide(0.0f, 0.0f, 25.f);
 			}
 			r.mainCamera.CalViewMat();
 		}

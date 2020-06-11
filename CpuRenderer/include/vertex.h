@@ -7,5 +7,6 @@ namespace CPURenderer
 	{
 	public:
 		Vector3 pos;
+		Vector3 norm;
 	};
 }

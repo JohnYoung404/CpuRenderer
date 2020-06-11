@@ -1,5 +1,6 @@
 #include <cmath>
 #include <vector>
+#include <algorithm>
 #include "renderer.h"
 #include "math_util.h"
 #include "matrix4.h"
@@ -48,6 +49,7 @@ void CPURenderer::Renderer::render_loop()
 		}
 	}
 	render_clear();
+	ViewPort::instance.ZBufferClear();
 
 	//Vertex x0{ {1000, 200, 0} }, x1{ {-400, 500, 0} }, x2{ {300, -100, 0} };
 	//Vertex y0{ {20, 200, 0} }, y1{ {300, 500, 0} }, y2{ {1700, 100, 0} };
@@ -107,6 +109,7 @@ void CPURenderer::Renderer::draw_wireframe_triangle(const Vertex & v0, const Ver
 	std::vector<Vertex> convex = { v0, v1, v2 };
 
 	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { 0.0f, (float)ViewPort::instance.width - 1.0f }, { 0.0f, (float)ViewPort::instance.height - 1.0f }, { -1.0f, 1.0f });
+
 	for (int i = 0; i < (int)clipped.size(); ++i)
 	{
 		if (i <= (int)clipped.size() - 2)
@@ -147,14 +150,14 @@ void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) cons
 		Vector3 norm = cross(sv1.pos - sv0.pos, sv2.pos - sv1.pos);
 		if (norm.z < 0)
 		{
-			draw_wireframe_triangle(sv0, sv1, sv2, c);
+			Vector3 modelNorm = cross(Vector3{ v1.x, v1.y, v1.z } -Vector3{ v0.x, v0.y, v0.z }, Vector3{ v2.x, v2.y, v2.z } -Vector3{ v1.x, v1.y, v1.z }).normalize();
+			sv0.norm = modelNorm;
+			sv1.norm = modelNorm;
+			sv2.norm = modelNorm;
+			//draw_wireframe_triangle(sv0, sv1, sv2, c);
+			line_sweep_fill_triangle(sv0, sv1, sv2, c);
 		}
 	}
-}
-
-void CPURenderer::Renderer::line_sweep_fill_triangle(const Vertex & v0, const Vertex & v1, const Vertex & v2, Color c) const
-{
-
 }
 
 namespace
@@ -232,6 +235,51 @@ namespace
 
 		return ret;
 	}
+
+	void fill_top_flat_triangle(CPURenderer::Renderer r, const CPURenderer::Vertex & v0, const CPURenderer::Vertex & v1, const CPURenderer::Vertex & v2, CPURenderer::Color c)
+	{
+
+	}
+
+	void fill_bottom_flat_triangle(CPURenderer::Renderer r, const CPURenderer::Vertex & v0, const CPURenderer::Vertex & v1, const CPURenderer::Vertex & v2, CPURenderer::Color c)
+	{
+
+	}
+
+	const CPURenderer::Vector3 lightDir = { 0.0f, 0.0f, 1.0f };
+
+	// triangle rasterization reference: 
+	// http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
+	void BaryCentric_filling(const CPURenderer::Renderer& r, const CPURenderer::Vertex & v0, const CPURenderer::Vertex & v1, const CPURenderer::Vertex & v2, CPURenderer::Color c)
+	{
+		using namespace CPURenderer;
+		std::pair<float, float> xBound = std::minmax({ v0.pos.x, v1.pos.x, v2.pos.x });
+		std::pair<float, float> yBound = std::minmax({ v0.pos.y, v1.pos.y, v2.pos.y });
+		Vector3 vs1 = { (v1.pos - v0.pos).x, (v1.pos - v0.pos).y, 1.0f };
+		Vector3 vs2 = { (v2.pos - v0.pos).x, (v2.pos - v0.pos).y, 1.0f };
+		for(int x = (int)std::round(xBound.first); x <= (int)std::round(xBound.second); ++x)
+			for (int y = (int)std::round(yBound.first); y <= (int)std::round(yBound.second); ++y)
+			{
+				Vector3 q = { x - v0.pos.x, y - v0.pos.y, 1.0f };
+				float s = (q.x * vs2.y - q.y * vs2.x) / (vs1.x * vs2.y - vs1.y * vs2.x);
+				float t = (vs1.x * q.y - vs1.y * q.x) / (vs1.x * vs2.y - vs1.y * vs2.x);
+				if (s >= 0 && t >= 0 && s + t <= 1.0f)
+				{
+					// Half-Lambert
+					float difLight = dot(v0.norm, lightDir);
+					float fLambert = 0.5f + 0.5f * difLight;
+					Color toDraw;
+					toDraw.r = (unsigned char)(fLambert * c.r);
+					toDraw.g = (unsigned char)(fLambert * c.g);
+					toDraw.b = (unsigned char)(fLambert * c.b);
+					//Vertex lp1 = Math::VertexLerp(v0, v1, x, Math::LerpAxis::X);
+					//Vertex lp2 = Math::VertexLerp(v2, lp1, y, Math::LerpAxis::Y);
+					//ViewPort::instance.SetPixel((int)round(x), (int)round(y), toDraw);
+					float zVal = (v1.pos.z - v0.pos.z) * s + (v2.pos.z - v0.pos.z) * t + v0.pos.z;
+					ViewPort::instance.SetPixelZCheck((int)round(x), (int)round(y), toDraw, zVal);
+				}
+			}
+	}
 }
 
 std::vector<CPURenderer::Vertex> CPURenderer::Renderer::sutherland_hodgman_clipping(std::vector<Vertex> inputVerts, Point2d x_range, Point2d y_range, Point2d z_range) const
@@ -244,4 +292,22 @@ std::vector<CPURenderer::Vertex> CPURenderer::Renderer::sutherland_hodgman_clipp
 	inputVerts = sutherland_hodgman_clip_by_axis(inputVerts, ScissorAxis::Z_pos, z_range.y);
 
 	return inputVerts;
+}
+
+void CPURenderer::Renderer::line_sweep_fill_triangle(const Vertex & v0, const Vertex & v1, const Vertex & v2, Color c) const
+{
+	BaryCentric_filling(*this, v0, v1, v2, c);
+
+	//it seems without clipping below is faster:
+	/*std::vector<Vertex> convex = { v0, v1, v2 };
+
+	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { 0.0f, (float)ViewPort::instance.width - 1.0f }, { 0.0f, (float)ViewPort::instance.height - 1.0f }, { -1.0f, 1.0f });
+
+	for (int i = 0; i < (int)clipped.size(); ++i)
+	{
+		if (i <= (int)clipped.size() - 2)
+		{
+			BaryCentric_filling(*this, clipped[0], clipped[i], clipped[i + 1], c);
+		}
+	}*/
 }

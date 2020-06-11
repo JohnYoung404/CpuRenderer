@@ -143,7 +143,12 @@ void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) cons
 		Vertex sv1 = { {t1.x / t1.w, t1.y / t1.w, t1.z / t1.w} };
 		Vertex sv2 = { {t2.x / t2.w, t2.y / t2.w, t2.z / t2.w} };
 
-		draw_wireframe_triangle(sv0, sv1, sv2, c);
+		//back-face culling
+		Vector3 norm = cross(sv1.pos - sv0.pos, sv2.pos - sv1.pos);
+		if (norm.z < 0)
+		{
+			draw_wireframe_triangle(sv0, sv1, sv2, c);
+		}
 	}
 }
 

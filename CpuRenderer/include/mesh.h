@@ -1,5 +1,6 @@
 #pragma once
 #include <tiny_obj_loader.h>
+#include "texture.h"
 
 namespace CPURenderer
 {
@@ -8,7 +9,9 @@ namespace CPURenderer
 	public:
 		std::vector<tinyobj::shape_t> mesh;
 		std::vector<tinyobj::material_t> mtl;
+		Texture tex;
 
-		void LoadMesh(const std::string &path);
+		void loadMesh(const std::string &path);
+		void loadTexture(const std::string &path);
 	};
 }

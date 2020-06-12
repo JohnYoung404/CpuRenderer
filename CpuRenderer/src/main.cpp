@@ -27,9 +27,21 @@ int main(int argc, char *argv[]) {
 	r.mainCamera.RotateX(45.0f);
 	r.mainCamera.slide(0.0f, 0.0f, 400.f);
 	r.mainCamera.CalViewMat();
-
+	
 	CPURenderer::Mesh ms;
-	ms.LoadMesh("res/cat.obj");
+	ms.loadMesh("res/cat.obj");
+	ms.loadTexture("res/cpp_logo.png");
+
+	//r.mainCamera.LookAt({ 0.0f, -10.0f, 100.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
+	//r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 10000.0f);
+	//r.mainCamera.ScreenMapping(ViewPort::instance);
+	////r.mainCamera.RotateX(45.0f);
+	////r.mainCamera.slide(0.0f, 0.0f, 400.f);
+	////r.mainCamera.CalViewMat();
+	//
+	//CPURenderer::Mesh ms;
+	//ms.loadMesh("res/cat2.obj");
+	//ms.loadTexture("res/cat2.png");
 
 	bool mouseDown = false;
 	int lastPosX, lastPosY;

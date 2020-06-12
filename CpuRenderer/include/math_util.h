@@ -37,7 +37,7 @@ namespace Math
 	inline Vertex VertexLerp(const Vertex& from, const Vertex& to, float val, LerpAxis axis)
 	{
 		// temporarily only deal with positions.
-		return Vertex{ VectorLerp(from.pos, to.pos, val, axis), VectorLerp(from.norm, to.norm, val, axis) };
+		return Vertex{ VectorLerp(from.pos, to.pos, val, axis) };
 	}
 }
 }

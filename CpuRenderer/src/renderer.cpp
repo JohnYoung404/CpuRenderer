@@ -19,11 +19,11 @@ void drawTri(const CPURenderer::Renderer &r, CPURenderer::Vector4 p0, CPURendere
 	Vector4 t1 = r.mainCamera.ScrMappingMat() * r.mainCamera.ProjMat() * r.mainCamera.ViewMat() * p1;
 	Vector4 t2 = r.mainCamera.ScrMappingMat() * r.mainCamera.ProjMat() * r.mainCamera.ViewMat() * p2;
 
-	Vertex sv0 = { {t0.x / t0.w, t0.y / t0.w, t0.z / t0.w} };
-	Vertex sv1 = { {t1.x / t1.w, t1.y / t1.w, t1.z / t1.w} };
-	Vertex sv2 = { {t2.x / t2.w, t2.y / t2.w, t2.z / t2.w} };
+	Vertex sv0 = { {t0.x / t0.w, t0.y / t0.w, t0.z / t0.w}, 1.0f, 1.0f };
+	Vertex sv1 = { {t1.x / t1.w, t1.y / t1.w, t1.z / t1.w}, 1.0f, 0.0f };
+	Vertex sv2 = { {t2.x / t2.w, t2.y / t2.w, t2.z / t2.w}, 0.0f, 1.0f };
 
-	r.draw_wireframe_triangle(sv0, sv1, sv2, Color::black);
+	r.draw_wireframe_triangle(sv0, sv1, sv2, Color::white);
 }
 
 void CPURenderer::Renderer::render_loop()
@@ -129,8 +129,9 @@ void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) cons
 {
 	if (!mesh.mesh.size())	return;
 	const auto &verts = mesh.mesh[0].mesh.positions;
+	const auto &coords = mesh.mesh[0].mesh.texcoords;
 	const auto &indices = mesh.mesh[0].mesh.indices;
-	const auto &mvp = mainCamera.ScrMappingMat() * mainCamera.ProjMat() * mainCamera.ViewMat();
+	const Matrix4 &mvp = mainCamera.ScrMappingMat() * mainCamera.ProjMat()* mainCamera.ViewMat();
 	for (size_t i = 0; i < indices.size(); i += 3)
 	{
 		size_t indice_0 = indices[i], indice_1 = indices[i + 1], indice_2 = indices[i + 2];
@@ -142,9 +143,22 @@ void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) cons
 		Vector4 t1 = mvp * v1;
 		Vector4 t2 = mvp * v2;
 
-		Vertex sv0 = { {t0.x / t0.w, t0.y / t0.w, t0.z / t0.w} };
-		Vertex sv1 = { {t1.x / t1.w, t1.y / t1.w, t1.z / t1.w} };
-		Vertex sv2 = { {t2.x / t2.w, t2.y / t2.w, t2.z / t2.w} };
+		Vertex sv0, sv1, sv2;
+
+		sv0.pos = { t0.x / t0.w, t0.y / t0.w, t0.z / t0.w };
+		sv0.xTexCoord = coords[indice_0 * 2] / t0.w;
+		sv0.yTexCoord = coords[indice_0 * 2 + 1] / t0.w;
+		sv0.one_div_w = 1.0f / t0.w;
+
+		sv1.pos = { t1.x / t1.w, t1.y / t1.w, t1.z / t1.w };
+		sv1.xTexCoord = coords[indice_1 * 2] / t1.w;
+		sv1.yTexCoord = coords[indice_1 * 2 + 1] / t1.w;
+		sv1.one_div_w = 1.0f / t1.w;
+
+		sv2.pos = { t2.x / t2.w, t2.y / t2.w, t2.z / t2.w };
+		sv2.xTexCoord = coords[indice_2 * 2] / t2.w;
+		sv2.yTexCoord = coords[indice_2 * 2 + 1] / t2.w;
+		sv2.one_div_w = 1.0f / t2.w;
 
 		//back-face culling
 		Vector3 norm = cross(sv1.pos - sv0.pos, sv2.pos - sv1.pos);
@@ -155,7 +169,7 @@ void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) cons
 			sv1.norm = modelNorm;
 			sv2.norm = modelNorm;
 			//draw_wireframe_triangle(sv0, sv1, sv2, c);
-			line_sweep_fill_triangle(sv0, sv1, sv2, c);
+			line_sweep_fill_triangle(sv0, sv1, sv2, c, mesh.tex);
 		}
 	}
 }
@@ -250,7 +264,8 @@ namespace
 
 	// triangle rasterization reference: 
 	// http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
-	void BaryCentric_filling(const CPURenderer::Renderer& r, const CPURenderer::Vertex & v0, const CPURenderer::Vertex & v1, const CPURenderer::Vertex & v2, CPURenderer::Color c)
+
+	void BaryCentric_filling(const CPURenderer::Renderer& r, const CPURenderer::Vertex & v0, const CPURenderer::Vertex & v1, const CPURenderer::Vertex & v2, CPURenderer::Color c, const CPURenderer::Texture & tex)
 	{
 		using namespace CPURenderer;
 		std::pair<float, float> xBound = std::minmax({ v0.pos.x, v1.pos.x, v2.pos.x });
@@ -268,14 +283,17 @@ namespace
 					// Half-Lambert
 					float difLight = dot(v0.norm, lightDir);
 					float fLambert = 0.5f + 0.5f * difLight;
-					Color toDraw;
-					toDraw.r = (unsigned char)(fLambert * c.r);
-					toDraw.g = (unsigned char)(fLambert * c.g);
-					toDraw.b = (unsigned char)(fLambert * c.b);
 					//Vertex lp1 = Math::VertexLerp(v0, v1, x, Math::LerpAxis::X);
 					//Vertex lp2 = Math::VertexLerp(v2, lp1, y, Math::LerpAxis::Y);
 					//ViewPort::instance.SetPixel((int)round(x), (int)round(y), toDraw);
 					float zVal = (v1.pos.z - v0.pos.z) * s + (v2.pos.z - v0.pos.z) * t + v0.pos.z;
+					float texCoordX = (v1.xTexCoord - v0.xTexCoord) * s + (v2.xTexCoord - v0.xTexCoord) * t + v0.xTexCoord;
+					float texCoordY = (v1.yTexCoord - v0.yTexCoord) * s + (v2.yTexCoord - v0.yTexCoord) * t + v0.yTexCoord;
+					float one_div_w = (v1.one_div_w - v0.one_div_w) * s + (v2.one_div_w - v0.one_div_w) * t + v0.one_div_w;
+					Color toDraw = tex.getPixel(texCoordX / one_div_w , texCoordY / one_div_w);
+					toDraw.r = (unsigned char)(fLambert * toDraw.r);
+					toDraw.g = (unsigned char)(fLambert * toDraw.g);
+					toDraw.b = (unsigned char)(fLambert * toDraw.b);
 					ViewPort::instance.SetPixelZCheck((int)round(x), (int)round(y), toDraw, zVal);
 				}
 			}
@@ -294,9 +312,9 @@ std::vector<CPURenderer::Vertex> CPURenderer::Renderer::sutherland_hodgman_clipp
 	return inputVerts;
 }
 
-void CPURenderer::Renderer::line_sweep_fill_triangle(const Vertex & v0, const Vertex & v1, const Vertex & v2, Color c) const
+void CPURenderer::Renderer::line_sweep_fill_triangle(const Vertex & v0, const Vertex & v1, const Vertex & v2, Color c, const Texture & tex) const
 {
-	BaryCentric_filling(*this, v0, v1, v2, c);
+	BaryCentric_filling(*this, v0, v1, v2, c, tex);
 
 	//it seems without clipping below is faster:
 	/*std::vector<Vertex> convex = { v0, v1, v2 };

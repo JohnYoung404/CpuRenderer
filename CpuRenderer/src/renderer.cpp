@@ -127,51 +127,101 @@ void CPURenderer::Renderer::draw_wireframe_triangle(const Vertex & v0, const Ver
 
 void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) const
 {
-	if (!mesh.mesh.size())	return;
-	const auto &verts = mesh.mesh[0].mesh.positions;
-	const auto &coords = mesh.mesh[0].mesh.texcoords;
-	const auto &indices = mesh.mesh[0].mesh.indices;
+	if (!mesh.shapes.size())	return;
+
 	const Matrix4 &mvp = mainCamera.ScrMappingMat() * mainCamera.ProjMat()* mainCamera.ViewMat();
-	for (size_t i = 0; i < indices.size(); i += 3)
+
+	for (size_t s = 0; s < mesh.shapes.size(); ++s)
 	{
-		size_t indice_0 = indices[i], indice_1 = indices[i + 1], indice_2 = indices[i + 2];
-		Vector4 v0 = { verts[indice_0 * 3], verts[indice_0 * 3 + 1], verts[indice_0 * 3 + 2], 1.0f };
-		Vector4 v1 = { verts[indice_1 * 3], verts[indice_1 * 3 + 1], verts[indice_1 * 3 + 2], 1.0f };
-		Vector4 v2 = { verts[indice_2 * 3], verts[indice_2 * 3 + 1], verts[indice_2 * 3 + 2], 1.0f };
-
-		Vector4 t0 = mvp * v0;
-		Vector4 t1 = mvp * v1;
-		Vector4 t2 = mvp * v2;
-
-		Vertex sv0, sv1, sv2;
-
-		sv0.pos = { t0.x / t0.w, t0.y / t0.w, t0.z / t0.w };
-		sv0.xTexCoord = coords[indice_0 * 2] / t0.w;
-		sv0.yTexCoord = coords[indice_0 * 2 + 1] / t0.w;
-		sv0.one_div_w = 1.0f / t0.w;
-
-		sv1.pos = { t1.x / t1.w, t1.y / t1.w, t1.z / t1.w };
-		sv1.xTexCoord = coords[indice_1 * 2] / t1.w;
-		sv1.yTexCoord = coords[indice_1 * 2 + 1] / t1.w;
-		sv1.one_div_w = 1.0f / t1.w;
-
-		sv2.pos = { t2.x / t2.w, t2.y / t2.w, t2.z / t2.w };
-		sv2.xTexCoord = coords[indice_2 * 2] / t2.w;
-		sv2.yTexCoord = coords[indice_2 * 2 + 1] / t2.w;
-		sv2.one_div_w = 1.0f / t2.w;
-
-		//back-face culling
-		Vector3 norm = cross(sv1.pos - sv0.pos, sv2.pos - sv1.pos);
-		if (norm.z < 0)
+		size_t index_offset = 0;
+		for (size_t f = 0; f < mesh.shapes[s].mesh.num_face_vertices.size(); ++f)
 		{
-			Vector3 modelNorm = cross(Vector3{ v1.x, v1.y, v1.z } -Vector3{ v0.x, v0.y, v0.z }, Vector3{ v2.x, v2.y, v2.z } -Vector3{ v1.x, v1.y, v1.z }).normalize();
-			sv0.norm = modelNorm;
-			sv1.norm = modelNorm;
-			sv2.norm = modelNorm;
-			//draw_wireframe_triangle(sv0, sv1, sv2, c);
-			line_sweep_fill_triangle(sv0, sv1, sv2, c, mesh.tex);
+			size_t fv = mesh.shapes[s].mesh.num_face_vertices[f];
+			Vector4 vv[3], vt[3];
+			//Vector3 vn[3];
+			Vertex sv[3];
+			for (size_t v = 0; v < fv; v++) {
+				// access to vertex
+				tinyobj::index_t idx = mesh.shapes[s].mesh.indices[index_offset + v];
+				tinyobj::real_t vx = mesh.attrib.vertices[3 * idx.vertex_index + 0];
+				tinyobj::real_t vy = mesh.attrib.vertices[3 * idx.vertex_index + 1];
+				tinyobj::real_t vz = mesh.attrib.vertices[3 * idx.vertex_index + 2];
+				//tinyobj::real_t nx = mesh.attrib.normals[3 * idx.normal_index + 0];
+				//tinyobj::real_t ny = mesh.attrib.normals[3 * idx.normal_index + 1];
+				//tinyobj::real_t nz = mesh.attrib.normals[3 * idx.normal_index + 2];
+				tinyobj::real_t tx = mesh.attrib.texcoords[2 * idx.texcoord_index + 0];
+				tinyobj::real_t ty = mesh.attrib.texcoords[2 * idx.texcoord_index + 1];
+
+				vv[v] = { vx, vy, vz, 1.0f };
+				vt[v] = mvp * vv[v];
+
+				//vn[v] = { nx, ny, nz };
+
+				sv[v].pos = { vt[v].x / vt[v].w, vt[v].y / vt[v].w, vt[v].z / vt[v].w };
+				sv[v].sTexCoord = tx / vt[v].w;
+				sv[v].tTexCoord = ty / vt[v].w;
+				sv[v].one_div_w = 1.0f / vt[v].w;
+			}
+			//back-face culling
+			Vector3 norm = cross(sv[1].pos - sv[0].pos, sv[2].pos - sv[1].pos);
+			if (norm.z < 0)
+			{
+				Vector3 modelNorm2 = cross(Vector3{ vv[1].x, vv[1].y, vv[1].z } - Vector3{ vv[0].x, vv[0].y, vv[0].z }, Vector3{ vv[2].x, vv[2].y, vv[2].z } -Vector3{ vv[1].x, vv[1].y, vv[1].z }).normalize();
+				sv[0].norm = modelNorm2;//vn[0];
+				sv[1].norm = modelNorm2;//vn[1];
+				sv[2].norm = modelNorm2;//vn[2];
+				//draw_wireframe_triangle(sv0, sv1, sv2, c);
+				line_sweep_fill_triangle(sv[0], sv[1], sv[2], c, mesh.tex);
+			}
+			index_offset += fv;
 		}
 	}
+	//const auto &verts = mesh.shapes[0].mesh.positions;
+	//const auto &norms = mesh.shapes[0].mesh.normals;
+	//const auto &coords = mesh.shapes[0].mesh.texcoords;
+	//const auto &indices = mesh.shapes[0].mesh.indices;
+	//
+	//for (size_t i = 0; i < indices.size(); i += 3)
+	//{
+	//	size_t indice_0 = indices[i], indice_1 = indices[i + 1], indice_2 = indices[i + 2];
+	//	Vector4 v0 = { verts[indice_0 * 3], verts[indice_0 * 3 + 1], verts[indice_0 * 3 + 2], 1.0f };
+	//	Vector4 v1 = { verts[indice_1 * 3], verts[indice_1 * 3 + 1], verts[indice_1 * 3 + 2], 1.0f };
+	//	Vector4 v2 = { verts[indice_2 * 3], verts[indice_2 * 3 + 1], verts[indice_2 * 3 + 2], 1.0f };
+	//
+	//	Vector4 t0 = mvp * v0;
+	//	Vector4 t1 = mvp * v1;
+	//	Vector4 t2 = mvp * v2;
+	//
+	//	Vertex sv0, sv1, sv2;
+	//
+	//	sv0.pos = { t0.x / t0.w, t0.y / t0.w, t0.z / t0.w };
+	//	sv0.xTexCoord = coords[indice_0 * 2] / t0.w;
+	//	sv0.yTexCoord = coords[indice_0 * 2 + 1] / t0.w;
+	//	sv0.one_div_w = 1.0f / t0.w;
+	//
+	//	sv1.pos = { t1.x / t1.w, t1.y / t1.w, t1.z / t1.w };
+	//	sv1.xTexCoord = coords[indice_1 * 2] / t1.w;
+	//	sv1.yTexCoord = coords[indice_1 * 2 + 1] / t1.w;
+	//	sv1.one_div_w = 1.0f / t1.w;
+	//
+	//	sv2.pos = { t2.x / t2.w, t2.y / t2.w, t2.z / t2.w };
+	//	sv2.xTexCoord = coords[indice_2 * 2] / t2.w;
+	//	sv2.yTexCoord = coords[indice_2 * 2 + 1] / t2.w;
+	//	sv2.one_div_w = 1.0f / t2.w;
+	//
+	//	//back-face culling
+	//	Vector3 norm = cross(sv1.pos - sv0.pos, sv2.pos - sv1.pos);
+	//	if (norm.z < 0)
+	//	{
+	//		Vector3 modelNorm = { norms[indice_0 * 3], norms[indice_0 * 3 + 1], norms[indice_0 * 3 + 2] };
+	//		Vector3 modelNorm2 = cross(Vector3{ v1.x, v1.y, v1.z } -Vector3{ v0.x, v0.y, v0.z }, Vector3{ v2.x, v2.y, v2.z } -Vector3{ v1.x, v1.y, v1.z }).normalize();
+	//		sv0.norm = modelNorm;
+	//		sv1.norm = modelNorm;
+	//		sv2.norm = modelNorm;
+	//		//draw_wireframe_triangle(sv0, sv1, sv2, c);
+	//		line_sweep_fill_triangle(sv0, sv1, sv2, c, mesh.tex);
+	//	}
+	//}
 }
 
 namespace
@@ -287,10 +337,10 @@ namespace
 					//Vertex lp2 = Math::VertexLerp(v2, lp1, y, Math::LerpAxis::Y);
 					//ViewPort::instance.SetPixel((int)round(x), (int)round(y), toDraw);
 					float zVal = (v1.pos.z - v0.pos.z) * s + (v2.pos.z - v0.pos.z) * t + v0.pos.z;
-					float texCoordX = (v1.xTexCoord - v0.xTexCoord) * s + (v2.xTexCoord - v0.xTexCoord) * t + v0.xTexCoord;
-					float texCoordY = (v1.yTexCoord - v0.yTexCoord) * s + (v2.yTexCoord - v0.yTexCoord) * t + v0.yTexCoord;
+					float texCoordS = (v1.sTexCoord - v0.sTexCoord) * s + (v2.sTexCoord - v0.sTexCoord) * t + v0.sTexCoord;
+					float texCoordT = (v1.tTexCoord - v0.tTexCoord) * s + (v2.tTexCoord - v0.tTexCoord) * t + v0.tTexCoord;
 					float one_div_w = (v1.one_div_w - v0.one_div_w) * s + (v2.one_div_w - v0.one_div_w) * t + v0.one_div_w;
-					Color toDraw = tex.getPixel(texCoordX / one_div_w , texCoordY / one_div_w);
+					Color toDraw = tex.getPixel(texCoordS / one_div_w, texCoordT / one_div_w);
 					toDraw.r = (unsigned char)(fLambert * toDraw.r);
 					toDraw.g = (unsigned char)(fLambert * toDraw.g);
 					toDraw.b = (unsigned char)(fLambert * toDraw.b);

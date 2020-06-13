@@ -7,8 +7,9 @@ namespace CPURenderer
 	class Mesh
 	{
 	public:
-		std::vector<tinyobj::shape_t> mesh;
+		std::vector<tinyobj::shape_t> shapes;
 		std::vector<tinyobj::material_t> mtl;
+		tinyobj::attrib_t attrib;
 		Texture tex;
 
 		void loadMesh(const std::string &path);

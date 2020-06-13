@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 	ms.loadMesh("res/cat.obj");
 	ms.loadTexture("res/cpp_logo.png");
 
-	//r.mainCamera.LookAt({ 0.0f, -10.0f, 100.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
+	//r.mainCamera.LookAt({ 100.0f, 0.0f, 100.0f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
 	//r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 10000.0f);
 	//r.mainCamera.ScreenMapping(ViewPort::instance);
 	////r.mainCamera.RotateX(45.0f);
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 			}
 			else if(event.wheel.y < 0)
 			{
-				r.mainCamera.slide(0.0f, 0.0f, 25.f);
+				r.mainCamera.slide(0.0f, 0.0f, -25.f);
 			}
 			r.mainCamera.CalViewMat();
 		}

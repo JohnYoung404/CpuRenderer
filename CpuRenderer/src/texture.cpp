@@ -13,14 +13,16 @@ bool CPURenderer::Texture::load(const std::string &filePath)
 	return true;
 }
 
-CPURenderer::Color CPURenderer::Texture::getPixel(float xCoord, float yCoord) const
+CPURenderer::Color CPURenderer::Texture::getPixel(float sCoord, float tCoord) const
 {
-	size_t _xPos = (size_t)(abs(xCoord - trunc(xCoord)) * (_width - 1));
-	size_t _yPos = (size_t)(abs(yCoord - trunc(yCoord)) * (_height - 1));
+	float floatingS = sCoord - trunc(sCoord);
+	float floatingT = tCoord - trunc(tCoord);
+	size_t _sPos = (size_t)((floatingS >= 0 ? floatingS : (1.0f + floatingS)) * (_width - 1));
+	size_t _tPos = (size_t)((floatingT >= 0 ? floatingT : (1.0f + floatingT)) * (_height - 1));
 	Color ret;
-	ret.r = _image[(_yPos * _width + _xPos) * 4];
-	ret.g = _image[(_yPos * _width + _xPos) * 4 + 1];
-	ret.b = _image[(_yPos * _width + _xPos) * 4 + 2];
-	ret.a = _image[(_yPos * _width + _xPos) * 4 + 3];
+	ret.r = _image[(_sPos* _width + _tPos) * 4];
+	ret.g = _image[(_sPos* _width + _tPos) * 4 + 1];
+	ret.b = _image[(_sPos* _width + _tPos) * 4 + 2];
+	ret.a = _image[(_sPos* _width + _tPos) * 4 + 3];
 	return ret;
 }

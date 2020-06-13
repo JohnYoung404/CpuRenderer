@@ -7,7 +7,7 @@ namespace CPURenderer
 	{
 	public:
 		Vector3 pos;
-		float xTexCoord, yTexCoord;
+		float sTexCoord, tTexCoord;
 		float one_div_w;
 		Vector3 norm;
 	};

@@ -8,12 +8,12 @@ namespace CPURenderer
 	{
 	public:
 		bool load(const std::string &filePath);
-		size_t width() const { return _width; }
-		size_t height() const { return _height; }
+		unsigned width() const { return _width; }
+		unsigned height() const { return _height; }
 		Color getPixel(float xCoord, float yCoord) const;
 
 	private:
 		std::vector<unsigned char> _image;
-		size_t _width, _height;
+		unsigned _width, _height;
 	};
 }

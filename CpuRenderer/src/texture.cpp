@@ -4,7 +4,7 @@
 
 bool CPURenderer::Texture::load(const std::string &filePath)
 {
-	unsigned errcode = lodepng::decode(_image, _width, _height, filePath);
+	unsigned int errcode = lodepng::decode(_image, _width, _height, filePath);
 	if (errcode)
 	{
 		std::cout << "encoder error " << errcode << ": " << lodepng_error_text(errcode) << std::endl;

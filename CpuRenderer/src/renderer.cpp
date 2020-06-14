@@ -322,8 +322,8 @@ namespace
 		std::pair<float, float> yBound = std::minmax({ v0.pos.y, v1.pos.y, v2.pos.y });
 		Vector3 vs1 = { (v1.pos - v0.pos).x, (v1.pos - v0.pos).y, 1.0f };
 		Vector3 vs2 = { (v2.pos - v0.pos).x, (v2.pos - v0.pos).y, 1.0f };
-		for(int x = (int)std::round(xBound.first); x <= (int)std::round(xBound.second); ++x)
-			for (int y = (int)std::round(yBound.first); y <= (int)std::round(yBound.second); ++y)
+		for(int x = (int)xBound.first; x <= (int)xBound.second; ++x)
+			for (int y = (int)yBound.first; y <= (int)yBound.second; ++y)
 			{
 				Vector3 q = { x - v0.pos.x, y - v0.pos.y, 1.0f };
 				float s = (q.x * vs2.y - q.y * vs2.x) / (vs1.x * vs2.y - vs1.y * vs2.x);
@@ -344,7 +344,7 @@ namespace
 					toDraw.r = (unsigned char)(fLambert * toDraw.r);
 					toDraw.g = (unsigned char)(fLambert * toDraw.g);
 					toDraw.b = (unsigned char)(fLambert * toDraw.b);
-					ViewPort::instance.SetPixelZCheck((int)round(x), (int)round(y), toDraw, zVal);
+					ViewPort::instance.SetPixelZCheck((int)x, (int)y, toDraw, zVal);
 				}
 			}
 	}
@@ -364,10 +364,10 @@ std::vector<CPURenderer::Vertex> CPURenderer::Renderer::sutherland_hodgman_clipp
 
 void CPURenderer::Renderer::line_sweep_fill_triangle(const Vertex & v0, const Vertex & v1, const Vertex & v2, Color c, const Texture & tex) const
 {
-	BaryCentric_filling(*this, v0, v1, v2, c, tex);
+	//BaryCentric_filling(*this, v0, v1, v2, c, tex);
 
 	//it seems without clipping below is faster:
-	/*std::vector<Vertex> convex = { v0, v1, v2 };
+	std::vector<Vertex> convex = { v0, v1, v2 };
 
 	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { 0.0f, (float)ViewPort::instance.width - 1.0f }, { 0.0f, (float)ViewPort::instance.height - 1.0f }, { -1.0f, 1.0f });
 
@@ -375,7 +375,7 @@ void CPURenderer::Renderer::line_sweep_fill_triangle(const Vertex & v0, const Ve
 	{
 		if (i <= (int)clipped.size() - 2)
 		{
-			BaryCentric_filling(*this, clipped[0], clipped[i], clipped[i + 1], c);
+			BaryCentric_filling(*this, clipped[0], clipped[i], clipped[i + 1], c, tex);
 		}
-	}*/
+	}
 }

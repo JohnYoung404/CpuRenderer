@@ -77,11 +77,12 @@ int main(int argc, char *argv[]) {
 			{
 				r.mainCamera.slide(0.0f, 0.0f, 25.f);
 			}
-			else if(event.wheel.y < 0)
+			else if (event.wheel.y < 0)
 			{
 				r.mainCamera.slide(0.0f, 0.0f, -25.f);
 			}
 			r.mainCamera.CalViewMat();
+			SDL_FlushEvent(SDL_MOUSEWHEEL);
 		}
 
 		r.render_loop();

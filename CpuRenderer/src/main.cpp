@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 
 	CPURenderer::Renderer r;
 	r.mainCamera.LookAt({ 0.0f, 200.0f, 1000.0f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, 200.0f, 0.0f });
-	r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 1.0f, 10000.0f);
+	r.mainCamera.Project(45.0f, (float)ViewPort::instance.width / ViewPort::instance.height, 10.0f, 10000.0f);
 	r.mainCamera.ScreenMapping(ViewPort::instance);
 	r.mainCamera.RotateX(45.0f);
 	r.mainCamera.slide(0.0f, 0.0f, 400.f);

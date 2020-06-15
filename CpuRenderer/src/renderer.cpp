@@ -108,15 +108,17 @@ void CPURenderer::Renderer::draw_wireframe_triangle(const Vertex & v0, const Ver
 {
 	std::vector<Vertex> convex = { v0, v1, v2 };
 
+	float val = 1.8f;
+
+	if    (abs(v0.pos.x) > val || abs(v0.pos.y) > val || abs(v0.pos.z) > val
+		|| abs(v1.pos.x) > val || abs(v1.pos.y) > val || abs(v1.pos.z) > val
+		|| abs(v2.pos.x) > val || abs(v2.pos.y) > val || abs(v2.pos.z) > val)
+		return;
+
 	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { -1.0f, 1.0f }, { -1.0f, 1.0f }, { 0.0f, 1.0f });
 
 	for (int i = 0; i < (int)clipped.size(); ++i)
 	{
-		volatile int s = 0;
-		if (clipped[i].pos.y == 0)
-		{
-			int c = s;
-		}
 		if (i <= (int)clipped.size() - 2)
 		{
 			Vector3 scPos0 = mainCamera.ScrMappingMat() * clipped[i].pos;
@@ -184,8 +186,8 @@ void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) cons
 				sv[0].norm = modelNorm2;//vn[0];
 				sv[1].norm = modelNorm2;//vn[1];
 				sv[2].norm = modelNorm2;//vn[2];
-				draw_wireframe_triangle(sv[0], sv[1], sv[2], c);
-				//line_sweep_fill_triangle(sv[0], sv[1], sv[2], c, mesh.tex);
+				line_sweep_fill_triangle(sv[0], sv[1], sv[2], c, mesh.tex);
+				//draw_wireframe_triangle(sv[0], sv[1], sv[2], Color::green);
 			}
 			index_offset += fv;
 		}
@@ -372,6 +374,13 @@ void CPURenderer::Renderer::line_sweep_fill_triangle(const Vertex & v0, const Ve
 
 	//it seems without clipping below is faster:
 	std::vector<Vertex> convex = { v0, v1, v2 };
+
+	float val = 1.8f;
+
+	if (abs(v0.pos.x) > val || abs(v0.pos.y) > val || abs(v0.pos.z) > val
+		|| abs(v1.pos.x) > val || abs(v1.pos.y) > val || abs(v1.pos.z) > val
+		|| abs(v2.pos.x) > val || abs(v2.pos.y) > val || abs(v2.pos.z) > val)
+		return;
 
 	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { -1.0f, 1.0f }, { -1.0f, 1.0f }, { 0.0f, 1.0f });
 

@@ -12,8 +12,8 @@ namespace CPURenderer
 		unsigned height() const { return _height; }
 		Color getPixel(float sCoord, float tCoord) const
 		{
-			float floatingS = sCoord - trunc(sCoord);
-			float floatingT = tCoord - trunc(tCoord);
+			float floatingS = sCoord - (int)(sCoord);
+			float floatingT = tCoord - (int)(tCoord);
 			size_t _sPos = (size_t)((floatingS >= 0 ? floatingS : (1.0f + floatingS)) * (_width - 1));
 			size_t _tPos = (size_t)((floatingT >= 0 ? floatingT : (1.0f + floatingT)) * (_height - 1));
 			Color ret;

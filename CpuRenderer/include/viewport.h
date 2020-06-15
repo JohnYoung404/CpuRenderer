@@ -44,7 +44,10 @@ namespace CPURenderer
 
 		void SetPixelZCheck(int posX, int posY, Color c, float zVal)
 		{
-			if (posX < 0 || posX >= width || posY < 0 || posY >= height || z_buffer[posY * width + posX] < zVal)
+			if (posX < 0 || posX >= width || posY < 0 || posY >= height)
+				return;
+
+			if (z_buffer[posY * width + posX] < zVal)
 				return;
 
 			frame_buffer[(posY * width + posX) * 4 + 0] = c.b;

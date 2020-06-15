@@ -108,20 +108,34 @@ void CPURenderer::Renderer::draw_wireframe_triangle(const Vertex & v0, const Ver
 {
 	std::vector<Vertex> convex = { v0, v1, v2 };
 
-	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { 0.0f, (float)ViewPort::instance.width - 1.0f }, { 0.0f, (float)ViewPort::instance.height - 1.0f }, { -1.0f, 1.0f });
+	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { -1.0f, 1.0f }, { -1.0f, 1.0f }, { 0.0f, 1.0f });
 
 	for (int i = 0; i < (int)clipped.size(); ++i)
 	{
+		volatile int s = 0;
+		if (clipped[i].pos.y == 0)
+		{
+			int c = s;
+		}
 		if (i <= (int)clipped.size() - 2)
 		{
-			draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[i + 1].pos.x , clipped[i + 1].pos.y }, c);
+			Vector3 scPos0 = mainCamera.ScrMappingMat() * clipped[i].pos;
+			Vector3 scPos1 = mainCamera.ScrMappingMat() * clipped[i + 1].pos;
+			draw_DDA_line({ scPos0.x , scPos0.y }, { scPos1.x , scPos1.y }, c);
 		}
 		else
 		{
-			draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[0].pos.x , clipped[0].pos.y }, c);
+			Vector3 scPos0 = mainCamera.ScrMappingMat() * clipped[i].pos;
+			Vector3 scPos1 = mainCamera.ScrMappingMat() * clipped[0].pos;
+			draw_DDA_line({ scPos0.x , scPos0.y }, { scPos1.x , scPos1.y }, c);
 		}
 
-		if (i != 0) draw_DDA_line({ clipped[i].pos.x , clipped[i].pos.y }, { clipped[0].pos.x , clipped[0].pos.y }, c);
+		if (i != 0)
+		{
+			Vector3 scPos0 = mainCamera.ScrMappingMat() * clipped[i].pos;
+			Vector3 scPos1 = mainCamera.ScrMappingMat() * clipped[0].pos;
+			draw_DDA_line({ scPos0.x , scPos0.y }, { scPos1.x , scPos1.y }, c);
+		}
 	}
 }
 
@@ -129,7 +143,7 @@ void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) cons
 {
 	if (!mesh.shapes.size())	return;
 
-	const Matrix4 &mvp = mainCamera.ScrMappingMat() * mainCamera.ProjMat()* mainCamera.ViewMat();
+	const Matrix4 &mvp = mainCamera.ProjMat()* mainCamera.ViewMat();
 
 	for (size_t s = 0; s < mesh.shapes.size(); ++s)
 	{
@@ -170,8 +184,8 @@ void CPURenderer::Renderer::draw_wireframe_mesh(const Mesh & mesh, Color c) cons
 				sv[0].norm = modelNorm2;//vn[0];
 				sv[1].norm = modelNorm2;//vn[1];
 				sv[2].norm = modelNorm2;//vn[2];
-				//draw_wireframe_triangle(sv0, sv1, sv2, c);
-				line_sweep_fill_triangle(sv[0], sv[1], sv[2], c, mesh.tex);
+				draw_wireframe_triangle(sv[0], sv[1], sv[2], c);
+				//line_sweep_fill_triangle(sv[0], sv[1], sv[2], c, mesh.tex);
 			}
 			index_offset += fv;
 		}
@@ -300,16 +314,6 @@ namespace
 		return ret;
 	}
 
-	void fill_top_flat_triangle(CPURenderer::Renderer r, const CPURenderer::Vertex & v0, const CPURenderer::Vertex & v1, const CPURenderer::Vertex & v2, CPURenderer::Color c)
-	{
-
-	}
-
-	void fill_bottom_flat_triangle(CPURenderer::Renderer r, const CPURenderer::Vertex & v0, const CPURenderer::Vertex & v1, const CPURenderer::Vertex & v2, CPURenderer::Color c)
-	{
-
-	}
-
 	const CPURenderer::Vector3 lightDir = { 0.0f, 0.0f, 1.0f };
 
 	// triangle rasterization reference: 
@@ -369,13 +373,21 @@ void CPURenderer::Renderer::line_sweep_fill_triangle(const Vertex & v0, const Ve
 	//it seems without clipping below is faster:
 	std::vector<Vertex> convex = { v0, v1, v2 };
 
-	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { 0.0f, (float)ViewPort::instance.width - 1.0f }, { 0.0f, (float)ViewPort::instance.height - 1.0f }, { -1.0f, 1.0f });
+	std::vector<Vertex> clipped = sutherland_hodgman_clipping(convex, { -1.0f, 1.0f }, { -1.0f, 1.0f }, { 0.0f, 1.0f });
 
-	for (int i = 0; i < (int)clipped.size(); ++i)
+	if (clipped.size())
 	{
-		if (i <= (int)clipped.size() - 2)
+		for (int i = 0; i < (int)clipped.size(); ++i)
 		{
-			BaryCentric_filling(*this, clipped[0], clipped[i], clipped[i + 1], c, tex);
+			clipped[i].pos = mainCamera.ScrMappingMat() * clipped[i].pos;
+		}
+
+		for (int i = 1; i < (int)clipped.size(); ++i)
+		{
+			if (i <= (int)clipped.size() - 2)
+			{
+				BaryCentric_filling(*this, clipped[0], clipped[i], clipped[i + 1], c, tex);
+			}
 		}
 	}
 }

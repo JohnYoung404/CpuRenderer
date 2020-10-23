@@ -1,28 +1,30 @@
 # CpuRenderer
 A CPU Renderer implemented in C++.
 
-## Build Project:
+## 1. Build Project:
 
-### MacOS/Unix need install dependency first:
+**if directory path constain space, cmake may build fail.(I dont want to bother fixing it yet)**
+
+* ### MacOS/Unix need install dependency first:
 ```
 brew install sdl2
 ```
 
-### VS/Unix:
+* ### VS/Unix:
 ```
 mkdir build
 cd build
 cmake ..
 ```
 
-### Xcode:
+* ### Xcode:
 ```
 mkdir build
 cd build
 cmake -G "Xcode" ..
 ```
 
-## Build Binary Then Run(should build project first):
+## 2. Build Binary Then Run(should build project first):
 ```
 (working directory: build)
 cmake --build . --target install
@@ -30,10 +32,10 @@ cd ../bin
 ./CpuRenderer
 ```
 
-## more info about this project:
+## 3. more info about this project:
 [How to implement a CPU Renderer](https://johnyoung404.github.io/2020/06/16/%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%AF%E6%B8%B2%E6%9F%93%E5%99%A8(CPU-Renderer)/)
 
-## Gallery
+## 4. Gallery
 
 Check out `gallery` folder if image links fail:
 
